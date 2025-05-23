@@ -12,7 +12,7 @@ services:
       - ./:/app  #Map the source code from the root directory
     environment:
       - NODE_ENV=development
-      - MONGO_HOST=mongo
+      - MONGO_HOST=localhost
       - MONGO_PORT=27017
     networks:
       - expense-tracker-network
