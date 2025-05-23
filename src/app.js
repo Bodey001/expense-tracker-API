@@ -10,6 +10,13 @@ connectDB();
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
+
+app.get("/", (req, res) => {
+  console.log("Cookies: ", req.cookies); // Log the cookies to the console
+  res.send("Hello World!");
+});
 
 
 //Import Routes
