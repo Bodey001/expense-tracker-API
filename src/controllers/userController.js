@@ -35,6 +35,8 @@ const jwtPayload = async (p) => {
   return payload;
 };
 
+
+
 //              Register a user
 exports.createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -62,7 +64,8 @@ exports.createUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    await newUser.save();
+
+    await User.insertOne(newUser);
 
     //Send a welcome email
     const mailOptions = {
@@ -86,7 +89,7 @@ exports.createUser = async (req, res) => {
       .json({ message: `User registered successfully`, savedUser });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: `Internal Server Error ${error.message}` });
+    res.status(500).json({ message: `Internal Server Error` });
   }
 };
 
@@ -128,7 +131,7 @@ exports.userLogin = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
-      subject: "Login",
+      subject: "Login Detected",
       text: `Hi ${username}, you have been successfully logged in to Expense-Tracker`,
     };
 
@@ -143,9 +146,6 @@ exports.userLogin = async (req, res) => {
     return res.status(200).json({ message: "Login Successful" });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ message: `Internal Server Error: ${error.message}` });
+    return res.status(500).json({ message: `Internal Server Error` });
   }
 };
-

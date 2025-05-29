@@ -28,4 +28,4 @@ services:
       - expense-tracker-network
 
 networks:
-  expense-tracker-network:  #Docker creates a network (with deafult driver: bridge) if it doesn't exist 
+  expense-tracker-network:  #Docker creates a network (with default driver: bridge) if it doesn't exist 
