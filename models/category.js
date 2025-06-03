@@ -27,7 +27,7 @@ const categorySchema = new Schema(
       required: true,
       trim: true,
     },
-    categories: categoriesSchema,
+    categories: [categoriesSchema],
   },
   {
     timestamps: true,

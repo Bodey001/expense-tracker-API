@@ -16,11 +16,11 @@ app.use(cookieParser());
 
 //Import Routes
 const userRoutes = require("./routes/userRoutes.js");
-app.use(userRoutes);
+app.use('/v1', userRoutes);
 const categoryRoutes = require('./routes/categoryRoutes.js');
-app.use(categoryRoutes);
+app.use("/v1", categoryRoutes);
 const expenseRoutes = require('./routes/expenseRoutes.js');
-app.use(expenseRoutes);
+app.use("/v1", expenseRoutes);
 
 
 

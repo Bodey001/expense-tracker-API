@@ -49,17 +49,18 @@ exports.createExpense = async (req, res) => {
     }
 
     //Search for the Categories based on the user's ID
-    const categories = await findCategoryByUserId(user);
-    if (!categories) {
+    const findCategories = await findCategoryByUserId(user);
+    if (!findCategories) {
       return res
         .status(404)
         .json({ message: "User does not have any existing categories" });
     }
 
     //Check if title exists amongst the categories for the user
-    const titleStatus = await findTitleInCategory(user, title);
-    console.log(titleStatus);
-    if (titleStatus.length === 0) {
+    const category = await findTitleInCategory(user, title);
+    console.log(category);
+
+    if (category.length === 0) {
       return res
         .status(404)
         .json({ message: `${title} category not found. Kindly add it up.` });
@@ -70,7 +71,7 @@ exports.createExpense = async (req, res) => {
       title,
       amount,
       description,
-      categoryIdByUser: categories.id,
+      categoryIdByUser: category.id,
     };
 
     await Expense.insertOne(newExpense);
@@ -80,10 +81,6 @@ exports.createExpense = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-
-
-
 
 //                  Get Expenses by Category
 exports.getExpensesByCategoryTitle = async (req, res) => {

@@ -31,7 +31,6 @@ const checkPassword = async (user, pass) => {
 
 const jwtPayload = async (param) => {
   const user = (await findUser(param)) || (await findByUsername(param));
-  console.log(user);
   const payload = {
     username: user.username,
     email: user.email,
@@ -113,7 +112,6 @@ exports.userLogin = async (req, res) => {
 
     //Find user by email or username
     const user = (await findUser(email)) || (await findByUsername(username));
-
     if (!user) {
       return res.status(404).json({ message: "User does not exist" });
     }
@@ -175,14 +173,14 @@ exports.updateUserInformation = async (req, res) => {
     //Keep the changes for unedited fields
     const user = await findUser(token.email);
     if (!username) {
-      username = user.username
-    };
+      username = user.username;
+    }
     if (!email) {
-      email = user.email
-    };
+      email = user.email;
+    }
     if (!password) {
-      password = user.password
-    };
+      password = user.password;
+    }
 
     //Hash the password
     const hashedPassword = await hashPassword(password, saltRounds);
@@ -203,12 +201,11 @@ exports.updateUserInformation = async (req, res) => {
     const updatedUser = await findUser(email);
 
     //Send a update mail
-    
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: updatedUser.email,
       subject: "Information on Update",
-      text: `Hi ${username}, you have been successfully updated your details in to Expense-Tracker`,
+      text: `Hi ${username}, your details have been successfully updated in to Expense-Tracker`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -224,6 +221,31 @@ exports.updateUserInformation = async (req, res) => {
       .json({ messagr: "User details successfully updated", user });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//              Delete a User
+exports.deleteUser = async (req, res) => {
+  try {
+    //Retrieve the token and decode it
+    const token = await verifyTokenFromCookie(req, res);
+    if (token === "error") {
+      return res
+        .status(404)
+        .json({ message: `User not found. Kindly login first` });
+    }
+
+    //Find the user
+    const user = await findUser(token.email);
+    if (!user) {
+      return res.status(404).json({ messsage: "User not found" });
+    }
+
+    await User.deleteOne({ email: user.email });
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
