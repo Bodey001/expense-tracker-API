@@ -2,6 +2,7 @@ const Category = require('../../models/category.js');
 const User = require("../../models/user.js");
 const { verifyTokenFromCookie } = require("../../config/cookieJwtAuth.js");
 const transporter = require("../../config/nodemailer.js");
+const Expense = require('../../models/expense.js');
 
 const findUser = async (email) => {
   return await User.findOne({ email });
@@ -11,12 +12,6 @@ const findCategoryByUserId = async (user) => {
   return await Category.find({ userId: user.id });
 };
 
-// const findTitleInCategory = async (user, inputTitle) => {
-//   return await Category.find({
-//     userId: user.id,
-//     "categories.title": inputTitle,
-//   });
-// };
 
 const findTitleInCategory = async (user, inputTitle) => {
   return await Category.aggregate([
@@ -191,6 +186,11 @@ exports.updateCategory = async (req, res) => {
       { arrayFilters: [{ "element.title": title }] }
     );
 
+    await Expense.updateMany(
+      { title },
+      { $set: { title: newTitle } }
+    );
+
     const updatedCategory = await findTitleInCategory(user, newTitle);
     return res.status(200).json({
       messsage: `Category has been successfully updated`,
@@ -233,12 +233,15 @@ exports.deleteCategory = async (req, res) => {
       return res.status(400).json({ message: "Title does not exist" });
     }
 
+    //Update the Category
     await Category.updateOne(
       { userId: user.id },
       {
         $pull: { categories: { title } },
       }
     );
+    //Update the Expense
+    await Expense.deleteMany({ title });
 
     const updatedCategory = await findCategoryByUserId(user);
     return res
