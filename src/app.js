@@ -16,11 +16,11 @@ app.use(customRateLimiter);
 
 //Import Routes
 const userRoutes = require("./routes/userRoutes.js");
-app.use("/v1", userRoutes);
+app.use("/users/v1", userRoutes);
 const categoryRoutes = require("./routes/categoryRoutes.js");
-app.use("/v1", categoryRoutes);
+app.use("/v1/categories/", categoryRoutes);
 const expenseRoutes = require("./routes/expenseRoutes.js");
-app.use("/v1", expenseRoutes);
+app.use("/v1/expenses", expenseRoutes);
 
 app.listen(PORT, async (req, res) => {
   try {

@@ -20,18 +20,6 @@ const findTitleInCategory = async (user, title) => {
   }}])
 };
 
-// const extracTitleFromCategory = async (user, title) => {
-//   return await Category.aggregate([
-//     {
-//       $match: {
-//         userId: user.id,
-//         "categories.title": title,
-//       },
-//     },
-//     { $unwind: "$categories" },
-//     { $match: { "categories.title": title } },
-//   ]);
-// };
 
 const findExpenseById = async (id) => {
   return await Expense.findById({ _id: id });
